@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/processdef">
+  <process id="process" isExecutable="true">
+    <startEvent id="start" name="Start">
+      <extensionElements>
+        <activiti:formProperty id="noofdays" name="Number Of Days" type="long"></activiti:formProperty>
+      </extensionElements>
+    </startEvent>
+    <exclusiveGateway id="sid-F167EA00-6B26-43F2-BDDE-C3B59BEEB829"></exclusiveGateway>
+    <userTask id="bossApproval" name="Boss Approval" activiti:assignee="kermit">
+      <extensionElements>
+        <activiti:formProperty id="selectedStatus" name="Approval Status" type="enum">
+          <activiti:value id="approved" name="Approved"></activiti:value>
+          <activiti:value id="rejected" name="Rejected"></activiti:value>
+        </activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <exclusiveGateway id="sid-5E770763-FC20-4BEF-B5F1-D75D5F02A546"></exclusiveGateway>
+    <endEvent id="sid-37204D16-08FD-4518-AE14-42D4DE608550"></endEvent>
+    <sequenceFlow id="sid-F4579EF2-3F15-4512-AD44-6DEDFABD0C25" sourceRef="approvedMail" targetRef="sid-37204D16-08FD-4518-AE14-42D4DE608550"></sequenceFlow>
+    <sequenceFlow id="sid-D3EACDEE-979B-4E31-ABF8-5984CAFF8401" sourceRef="start" targetRef="sid-F167EA00-6B26-43F2-BDDE-C3B59BEEB829"></sequenceFlow>
+    <sequenceFlow id="validRequest" name="Valid request for evaluation" sourceRef="sid-F167EA00-6B26-43F2-BDDE-C3B59BEEB829" targetRef="bossApproval">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${noofdays <= 10}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-521CBB32-367D-4354-BD55-5B09769760D1" name="exceeds available vacation days" sourceRef="sid-F167EA00-6B26-43F2-BDDE-C3B59BEEB829" targetRef="autorejectmail">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${noofdays > 10}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow123" sourceRef="bossApproval" targetRef="sid-5E770763-FC20-4BEF-B5F1-D75D5F02A546"></sequenceFlow>
+    <sequenceFlow id="approved" name="${approved}" sourceRef="sid-5E770763-FC20-4BEF-B5F1-D75D5F02A546" targetRef="approvedMail">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${selectedStatus == 'approved'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="rejected" name="${!approved}" sourceRef="sid-5E770763-FC20-4BEF-B5F1-D75D5F02A546" targetRef="sid-37204D16-08FD-4518-AE14-42D4DE608550">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${selectedStatus == 'rejected'}]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="autorejectmail" name="Auto Reject Mail"></userTask>
+    <userTask id="approvedMail" name="User and HR Notification Mail"></userTask>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_process">
+    <bpmndi:BPMNPlane bpmnElement="process" id="BPMNPlane_process">
+      <bpmndi:BPMNShape bpmnElement="start" id="BPMNShape_start">
+        <omgdc:Bounds height="30.0" width="30.0" x="45.0" y="225.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-F167EA00-6B26-43F2-BDDE-C3B59BEEB829" id="BPMNShape_sid-F167EA00-6B26-43F2-BDDE-C3B59BEEB829">
+        <omgdc:Bounds height="40.0" width="40.0" x="150.0" y="220.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="bossApproval" id="BPMNShape_bossApproval">
+        <omgdc:Bounds height="80.0" width="100.0" x="210.0" y="360.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-5E770763-FC20-4BEF-B5F1-D75D5F02A546" id="BPMNShape_sid-5E770763-FC20-4BEF-B5F1-D75D5F02A546">
+        <omgdc:Bounds height="40.0" width="40.0" x="420.0" y="380.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-37204D16-08FD-4518-AE14-42D4DE608550" id="BPMNShape_sid-37204D16-08FD-4518-AE14-42D4DE608550">
+        <omgdc:Bounds height="28.0" width="28.0" x="606.0" y="585.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="autorejectmail" id="BPMNShape_autorejectmail">
+        <omgdc:Bounds height="80.0" width="100.0" x="210.0" y="15.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="approvedMail" id="BPMNShape_approvedMail">
+        <omgdc:Bounds height="80.0" width="100.0" x="570.0" y="360.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="approved" id="BPMNEdge_approved">
+        <omgdi:waypoint x="459.57307692307694" y="400.42692307692306"></omgdi:waypoint>
+        <omgdi:waypoint x="570.0" y="400.0038314176245"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="rejected" id="BPMNEdge_rejected">
+        <omgdi:waypoint x="440.5" y="419.5"></omgdi:waypoint>
+        <omgdi:waypoint x="440.5" y="465.0"></omgdi:waypoint>
+        <omgdi:waypoint x="620.0" y="465.0"></omgdi:waypoint>
+        <omgdi:waypoint x="620.0" y="585.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="validRequest" id="BPMNEdge_validRequest">
+        <omgdi:waypoint x="170.5" y="259.5"></omgdi:waypoint>
+        <omgdi:waypoint x="170.5" y="400.0"></omgdi:waypoint>
+        <omgdi:waypoint x="210.0" y="400.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-D3EACDEE-979B-4E31-ABF8-5984CAFF8401" id="BPMNEdge_sid-D3EACDEE-979B-4E31-ABF8-5984CAFF8401">
+        <omgdi:waypoint x="74.99984644284858" y="240.0678726083387"></omgdi:waypoint>
+        <omgdi:waypoint x="150.4090909090909" y="240.4090909090909"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-F4579EF2-3F15-4512-AD44-6DEDFABD0C25" id="BPMNEdge_sid-F4579EF2-3F15-4512-AD44-6DEDFABD0C25">
+        <omgdi:waypoint x="620.0" y="440.0"></omgdi:waypoint>
+        <omgdi:waypoint x="620.0" y="585.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow123" id="BPMNEdge_flow123">
+        <omgdi:waypoint x="310.0" y="400.1385041551247"></omgdi:waypoint>
+        <omgdi:waypoint x="420.44444444444446" y="400.44444444444446"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-521CBB32-367D-4354-BD55-5B09769760D1" id="BPMNEdge_sid-521CBB32-367D-4354-BD55-5B09769760D1">
+        <omgdi:waypoint x="170.5" y="220.5"></omgdi:waypoint>
+        <omgdi:waypoint x="170.5" y="55.0"></omgdi:waypoint>
+        <omgdi:waypoint x="210.0" y="55.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
